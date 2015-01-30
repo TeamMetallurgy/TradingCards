@@ -1,0 +1,48 @@
+{
+  "setname": "Base Set",
+  "dropweight": 1,
+  "boosterSprite": "BaseSetBooster",
+  "boosterCards": 3,
+  "typeChance": {
+    "uncommon": 0.3,
+    "rare": 0.1,
+    "superRare": 0.018,
+    "ultraRare": 0.0019,
+    "legendary": 0.0001,
+    "foil": 0.25,
+    "gold": 0.01,
+    "foilGold": 0.001
+  },
+  "guarantees": {
+    "common": 0,
+    "uncommon": 0,
+    "uncommonBetter": 0,
+    "rare": 0,
+    "rareBetter": 0,
+    "superRare": 0,
+    "superRareBetter": 0,
+    "ultraRare": 0,
+    "ultraRareBetter": 0,
+    "legendary": 0,
+    "foil": 0,
+    "gold": 0
+  },
+  "cards": [
+    {
+      "cardName": "Steve",
+      "rarity": "Common",
+      "sprite": "SteveCard",
+      "flavortext": "Steve is the man!",
+      "alwaysFoil": false,
+      "alwaysGold": false
+    },
+    {
+      "cardName": "Zombie",
+      "rarity": "Common",
+      "sprite": "ZombieCard",
+      "flavortext": "Brainnnsss...",
+      "alwaysFoil": false,
+      "alwaysGold": false
+    }
+  ]
+}

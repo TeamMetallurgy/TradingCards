@@ -1,0 +1,20 @@
+[
+{
+  "modid": "TradingCard",
+  "name": "TradingCard",
+  "description": "A trading card for minecraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "updateUrl": "",
+  "authors": [
+    "lclc98",
+    "ShadowClaimer"
+  ],
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]
