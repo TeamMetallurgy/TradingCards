@@ -8,6 +8,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
 @Mod(modid = LibMisc.MODID, name = LibMisc.MODNAME, version = LibMisc.VERSION, dependencies = LibMisc.DEPENDENCIES)
@@ -19,6 +22,7 @@ public class TradingCard {
 
     @SidedProxy(serverSide = LibMisc.PROXY_COMMON, clientSide = LibMisc.PROXY_CLIENT)
     public static CommonProxy proxy;
+    public CreativeTabs creativeTabItems= new CreativeTab(LibMisc.MODID);
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -30,6 +34,7 @@ public class TradingCard {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         CardHandler.loadSets();
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
 
@@ -41,6 +46,8 @@ public class TradingCard {
     @SubscribeEvent
     public void onMonsterDead(LivingDropsEvent event){
         
-        
+        event.entityLiving.dropItem(CardHandler.getBooster(),1);
+        // drop booster
+
     }
 }

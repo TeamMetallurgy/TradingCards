@@ -161,7 +161,7 @@ public class CardSet {
 
     }
 
-    class Cards {
+    public class Cards {
         private String cardName;
         private String rarity;
         private String sprite;
