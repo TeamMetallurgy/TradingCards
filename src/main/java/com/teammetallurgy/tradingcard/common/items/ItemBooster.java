@@ -24,7 +24,6 @@ public class ItemBooster extends Item {
         this.setTextureName(LibMisc.MODID + ":BoosterBasic");
         this.setUnlocalizedName(setName.replace(" ", "") + ".booster");
         this.setCreativeTab(TradingCard.instance.creativeTabItems);
-        this.setMaxDamage(0);
     }
 
 

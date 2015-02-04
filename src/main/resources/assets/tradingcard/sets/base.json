@@ -32,17 +32,43 @@
       "cardName": "Steve",
       "rarity": "Common",
       "sprite": "SteveCard",
-      "flavortext": "Steve is the man!",
-      "alwaysFoil": false,
-      "alwaysGold": false
+      "flavortext": "Steve is the man!"
     },
     {
       "cardName": "Zombie",
       "rarity": "Common",
       "sprite": "ZombieCard",
-      "flavortext": "Brainnnsss...",
-      "alwaysFoil": false,
-      "alwaysGold": false
+      "flavortext": "Brainnnsss..."
+    },
+    {
+      "cardName": "Air",
+      "rarity": "Common",
+      "sprite": "AirCard"
+    },
+    {
+      "cardName": "Andesite",
+      "rarity": "Common",
+      "sprite": "AndesiteCard"
+    },
+    {
+      "cardName": "Baby Zombie",
+      "rarity": "Common",
+      "sprite": "BabyZombieCard"
+    },
+    {
+      "cardName": "Bat",
+      "rarity": "Common",
+      "sprite": "BatCard"
+    },
+    {
+      "cardName": "Block of Coal",
+      "rarity": "Common",
+      "sprite": "CoalBlockCard"
+    },
+    {
+      "cardName": "Cactus",
+      "rarity": "Common",
+      "sprite": "CactusCard"
     }
   ]
 }

@@ -86,7 +86,7 @@ public class CardHandler {
 
         if (random.nextInt(4) != 0)
             return null;
-        
+
         String set = items[random.nextInt(totalSum)].getSetname();
         return boosterCard.get(set);
     }

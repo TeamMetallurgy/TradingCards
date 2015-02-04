@@ -5,6 +5,7 @@ import com.teammetallurgy.tradingcard.common.cards.CardSet;
 import com.teammetallurgy.tradingcard.common.lib.LibMisc;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
@@ -54,6 +55,13 @@ public class ItemCards extends Item {
         for (Map.Entry<Integer, String> name : this.names.entrySet()) {
             list.add(new ItemStack(item, 1, name.getKey()));
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
+        String flavorText = cards.get(itemStack.getItemDamage()).getFlavortext();
+        if (flavorText != null && flavorText != "")
+            list.add("§8§o" + flavorText);
     }
 
     @Override
