@@ -1,4 +1,4 @@
-package com.teammetallurgy.tradingcard.common.cards;
+package com.teammetallurgy.tradingcard.common.handler;
 
 import java.util.ArrayList;
 

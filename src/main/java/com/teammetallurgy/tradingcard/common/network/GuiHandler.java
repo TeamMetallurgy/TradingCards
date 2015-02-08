@@ -1,8 +1,8 @@
 package com.teammetallurgy.tradingcard.common.network;
 
 import com.teammetallurgy.tradingcard.client.gui.GuiAlbum;
-import com.teammetallurgy.tradingcard.inventory.ContainerCardAlbum;
-import com.teammetallurgy.tradingcard.inventory.InventoryCardAlbum;
+import com.teammetallurgy.tradingcard.common.inventory.ContainerCardAlbum;
+import com.teammetallurgy.tradingcard.common.inventory.InventoryCardAlbum;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -23,3 +23,4 @@ public class GuiHandler implements IGuiHandler {
         return null;
     }
 }
+

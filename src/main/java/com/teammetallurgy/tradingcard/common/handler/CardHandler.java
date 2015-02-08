@@ -1,4 +1,4 @@
-package com.teammetallurgy.tradingcard.common.cards;
+package com.teammetallurgy.tradingcard.common.handler;
 
 import com.google.gson.Gson;
 import com.teammetallurgy.tradingcard.common.items.ItemBooster;
@@ -20,8 +20,8 @@ public class CardHandler {
     private static ArrayList<String> setNames = new ArrayList<String>();
     private static ArrayList<CardSet> cardsetList = new ArrayList<CardSet>();
 
-    public static HashMap<String, ItemCards> cardHashMap = new HashMap<String, ItemCards>();
     public static HashMap<String, ItemBooster> boosterCard = new HashMap<String, ItemBooster>();
+    
 
     private static int totalSum;
     private static CardSet[] items;
@@ -42,18 +42,18 @@ public class CardHandler {
                 if (resource != null) {
                     CardSet cardSet = new Gson().fromJson(new InputStreamReader(resource.openStream()), CardSet.class);
                     cardsetList.add(cardSet);
-                    String setName = cardSet.getSetname();
 
-                    ItemCards setCards = new ItemCards(setName.replace(" ", ".") + ".cards");
-                    cardHashMap.put(setName, setCards);
+                    String setName = cardSet.getSetname();
+                    ItemCards setCards = new ItemCards(setName);
 
                     for (int i = 0; i < cardSet.getCards().size(); i++) {
                         CardSet.Cards card = cardSet.getCards().get(i);
                         createCreateItem(setName, setCards, card, i);
                     }
-                    totalSum += cardSet.getDropweight();
 
-                    ItemBooster itemBooster = new ItemBooster(setName, cardSet);
+                    totalSum += cardSet.getDropweight();
+                    
+                    ItemBooster itemBooster = new ItemBooster(cardSet, setCards);
                     GameRegistry.registerItem(itemBooster, setName + ".booster");
                     boosterCard.put(setName, itemBooster);
 

@@ -1,4 +1,4 @@
-package com.teammetallurgy.tradingcard;
+package com.teammetallurgy.tradingcard.common.tabs;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;

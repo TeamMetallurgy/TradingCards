@@ -1,9 +1,9 @@
 package com.teammetallurgy.tradingcard.client.gui;
 
-import com.teammetallurgy.tradingcard.common.lib.LibMisc;
-import com.teammetallurgy.tradingcard.inventory.ContainerCardAlbum;
-import com.teammetallurgy.tradingcard.inventory.InventoryCardAlbum;
-import com.teammetallurgy.tradingcard.inventory.SlotCard;
+import com.teammetallurgy.tradingcard.common.utils.LibMisc;
+import com.teammetallurgy.tradingcard.common.inventory.ContainerCardAlbum;
+import com.teammetallurgy.tradingcard.common.inventory.InventoryCardAlbum;
+import com.teammetallurgy.tradingcard.common.inventory.SlotCard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -53,13 +53,6 @@ public class GuiAlbum extends GuiContainer {
         this.ySize = 222;
     }
 
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-        //draw text and stuff here
-        //the parameters for drawString are: string, x, y, color
-        fontRendererObj.drawString("Cards Album", 8, 6, 4210752);
-    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float parital, int mouseX, int mouseY) {

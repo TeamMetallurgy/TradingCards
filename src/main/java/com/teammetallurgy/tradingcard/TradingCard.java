@@ -1,29 +1,28 @@
 package com.teammetallurgy.tradingcard;
 
-import com.teammetallurgy.tradingcard.common.cards.CardHandler;
+import com.teammetallurgy.tradingcard.common.CommonProxy;
+import com.teammetallurgy.tradingcard.common.handler.CardHandler;
 import com.teammetallurgy.tradingcard.common.items.ItemCardAlbum;
-import com.teammetallurgy.tradingcard.common.lib.LibMisc;
+import com.teammetallurgy.tradingcard.common.tabs.CreativeTab;
+import com.teammetallurgy.tradingcard.common.utils.LibMisc;
 import com.teammetallurgy.tradingcard.common.network.GuiHandler;
-import com.teammetallurgy.tradingcard.inventory.InventoryCardAlbum;
+import com.teammetallurgy.tradingcard.common.network.PacketGui;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @Mod(modid = LibMisc.MODID, name = LibMisc.MODNAME, version = LibMisc.VERSION, dependencies = LibMisc.DEPENDENCIES)
 public class TradingCard {
@@ -36,12 +35,14 @@ public class TradingCard {
     public static CommonProxy proxy;
     public CreativeTabs creativeTabItems = new CreativeTab(LibMisc.MODID);
 
+    public static SimpleNetworkWrapper network;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        network = NetworkRegistry.INSTANCE.newSimpleChannel(LibMisc.MODID);
+        network.registerMessage(PacketGui.Handler.class, PacketGui.class, 0, Side.SERVER);
 
-        System.out.println("Test");
         CardHandler.register("base");
-
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
     }
 
@@ -59,9 +60,20 @@ public class TradingCard {
         CardHandler.getBooster();
     }
 
-    @SubscribeEvent
-    public void onMonsterDead(LivingDropsEvent event) {
-        event.entityLiving.dropItem(CardHandler.getBooster(), 1);
+    @Mod.EventHandler
+    public void onServerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        EntityPlayer player = event.player;
+        if (!player.worldObj.isRemote) {
+            if (player.getEntityData().hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+                NBTTagCompound nbtTagCompound = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+                System.out.println(nbtTagCompound);
+                if (!nbtTagCompound.hasKey("existingPlayer") || !nbtTagCompound.getBoolean("existingPlayer")) {
+                    nbtTagCompound.setBoolean("existingPlayer", true);
+
+                    player.inventory.addItemStackToInventory(new ItemStack(Items.apple));
+                }
+            }
+        }
     }
 
 }

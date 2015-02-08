@@ -1,4 +1,4 @@
-package com.teammetallurgy.tradingcard.common.lib;
+package com.teammetallurgy.tradingcard.common.utils;
 
 public class LibMisc {
 
@@ -8,7 +8,7 @@ public class LibMisc {
     public static final String DEPENDENCIES = "";
 
     // Proxy Constants
-    public static final String PROXY_COMMON = "com.teammetallurgy.tradingcard.CommonProxy";
-    public static final String PROXY_CLIENT = "com.teammetallurgy.tradingcard.ClientProxy";
+    public static final String PROXY_COMMON = "com.teammetallurgy.tradingcard.common.CommonProxy";
+    public static final String PROXY_CLIENT = "com.teammetallurgy.tradingcard.client.ClientProxy";
 
 }

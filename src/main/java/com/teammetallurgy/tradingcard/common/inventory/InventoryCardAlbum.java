@@ -1,4 +1,4 @@
-package com.teammetallurgy.tradingcard.inventory;
+package com.teammetallurgy.tradingcard.common.inventory;
 
 import com.teammetallurgy.tradingcard.common.items.ItemCards;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +11,8 @@ import net.minecraftforge.common.util.Constants;
 public class InventoryCardAlbum implements IInventory {
     public ItemStack stack;
     protected ItemStack[] inventory = new ItemStack[6 * 9 * 16];
+
+    public int page = 0;
 
     public InventoryCardAlbum(ItemStack itemStack) {
         stack = itemStack;
@@ -85,7 +87,7 @@ public class InventoryCardAlbum implements IInventory {
                 inventory[i] = null;
         }
         writeToNBT(stack.getTagCompound());
-        
+
     }
 
     @Override
@@ -100,7 +102,7 @@ public class InventoryCardAlbum implements IInventory {
 
     @Override
     public void closeInventory() {
-        
+
     }
 
     @Override
@@ -116,6 +118,12 @@ public class InventoryCardAlbum implements IInventory {
             ItemStack itemStack = ItemStack.loadItemStackFromNBT(dataTag);
             setInventorySlotContents(slot, itemStack);
         }
+
+        if (nbtTagCompound.hasKey("Page")) {
+            page = nbtTagCompound.getInteger("Page");
+        } else {
+            page = 0;
+        }
     }
 
     public void writeToNBT(NBTTagCompound nbtTagCompound) {
@@ -130,6 +138,7 @@ public class InventoryCardAlbum implements IInventory {
             }
         }
         nbtTagCompound.setTag("Inventory", nbtTagList);
+        nbtTagCompound.setInteger("Page", page);
     }
 }
 

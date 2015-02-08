@@ -1,7 +1,6 @@
-package com.teammetallurgy.tradingcard.inventory;
+package com.teammetallurgy.tradingcard.common.inventory;
 
 import com.teammetallurgy.tradingcard.common.items.ItemCards;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 

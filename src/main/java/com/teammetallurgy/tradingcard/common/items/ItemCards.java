@@ -1,8 +1,8 @@
 package com.teammetallurgy.tradingcard.common.items;
 
 import com.teammetallurgy.tradingcard.TradingCard;
-import com.teammetallurgy.tradingcard.common.cards.CardSet;
-import com.teammetallurgy.tradingcard.common.lib.LibMisc;
+import com.teammetallurgy.tradingcard.common.handler.CardSet;
+import com.teammetallurgy.tradingcard.common.utils.LibMisc;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,15 +21,18 @@ public class ItemCards extends Item {
     private HashMap<Integer, IIcon> icons = new HashMap<Integer, IIcon>();
     private HashMap<Integer, CardSet.Cards> cards = new HashMap<Integer, CardSet.Cards>();
 
+    String postFix;
 
-    public ItemCards(String postfix) {
+    public ItemCards(String postFix) {
         this.setTextureName(LibMisc.MODID + ":BlankCommonCard");
-        this.setUnlocalizedName("item." + postfix + ".cards");
+        this.setUnlocalizedName("item." + postFix.replace(" ", ".") + ".cards");
         this.setCreativeTab(TradingCard.instance.creativeTabItems);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
+        this.postFix = postFix;
     }
 
+    
     public void addSubItem(int meta, String name, String texture, CardSet.Cards card) {
         this.names.put(meta, name);
         this.textures.put(meta, texture);
@@ -62,6 +65,8 @@ public class ItemCards extends Item {
         String flavorText = cards.get(itemStack.getItemDamage()).getFlavortext();
         if (flavorText != null && flavorText != "")
             list.add("§8§o" + flavorText);
+
+        list.add("This card is " + (itemStack.getItemDamage() + 1) + "/" + cards.size() + " in the " + postFix);
     }
 
     @Override
