@@ -10,14 +10,15 @@ import net.minecraftforge.common.util.Constants;
 
 public class InventoryCardAlbum implements IInventory {
     public ItemStack stack;
-    protected ItemStack[] inventory = new ItemStack[6 * 9 * 16];
+    protected ItemStack[] inventory;
 
-    public int page = 0;
+    public int maxPage = 16;
+
+    public int currentPage;
 
     public InventoryCardAlbum(ItemStack itemStack) {
         stack = itemStack;
 
-        // Just in case the itemstack doesn't yet have an NBT Tag Compound:
         if (!stack.hasTagCompound()) {
             stack.setTagCompound(new NBTTagCompound());
         }
@@ -62,6 +63,7 @@ public class InventoryCardAlbum implements IInventory {
 
     @Override
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
+
         inventory[slotIndex] = itemStack;
     }
 
@@ -71,7 +73,7 @@ public class InventoryCardAlbum implements IInventory {
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean isCustomInventoryName() {
         return false;
     }
 
@@ -87,7 +89,6 @@ public class InventoryCardAlbum implements IInventory {
                 inventory[i] = null;
         }
         writeToNBT(stack.getTagCompound());
-
     }
 
     @Override
@@ -96,13 +97,12 @@ public class InventoryCardAlbum implements IInventory {
     }
 
     @Override
-    public void openInventory() {
-
+    public void openChest() {
     }
 
     @Override
-    public void closeInventory() {
-
+    public void closeChest() {
+        writeToNBT(stack.getTagCompound());
     }
 
     @Override
@@ -111,18 +111,20 @@ public class InventoryCardAlbum implements IInventory {
     }
 
     public void readFromNBT(NBTTagCompound nbtTagCompound) {
+        if (nbtTagCompound.hasKey("Page")) {
+            maxPage = nbtTagCompound.getInteger("Page");
+        } else {
+            maxPage = 16;
+        }
+
+        inventory = new ItemStack[54 * maxPage];
+
         NBTTagList nbtTagList = nbtTagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
             NBTTagCompound dataTag = nbtTagList.getCompoundTagAt(i);
-            byte slot = dataTag.getByte("slot");
+            int slot = dataTag.getInteger("slot");
             ItemStack itemStack = ItemStack.loadItemStackFromNBT(dataTag);
             setInventorySlotContents(slot, itemStack);
-        }
-
-        if (nbtTagCompound.hasKey("Page")) {
-            page = nbtTagCompound.getInteger("Page");
-        } else {
-            page = 0;
         }
     }
 
@@ -133,12 +135,12 @@ public class InventoryCardAlbum implements IInventory {
             if (itemStack != null) {
                 NBTTagCompound dataTag = new NBTTagCompound();
                 itemStack.writeToNBT(dataTag);
-                dataTag.setByte("slot", (byte) i);
+                dataTag.setInteger("slot", i);
                 nbtTagList.appendTag(dataTag);
             }
         }
         nbtTagCompound.setTag("Inventory", nbtTagList);
-        nbtTagCompound.setInteger("Page", page);
+        nbtTagCompound.setInteger("Page", maxPage);
     }
 }
 

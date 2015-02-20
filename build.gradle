@@ -24,9 +24,10 @@ archivesBaseName = "TradingCards"
 minecraft {
     version = "${minecraft_version}-${forge_version}"
     runDir = 'run'
+    mappings = 'snapshot_nodoc_20140925'
 
     replace "@VERSION@", project.version
-    replaceIn "lib/LibMisc.java"
+    replaceIn "utils/LibMisc.java"
 }
 
 task buildInfo() {

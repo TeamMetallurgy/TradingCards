@@ -28,11 +28,11 @@ public class ItemCards extends Item {
         this.setUnlocalizedName("item." + postFix.replace(" ", ".") + ".cards");
         this.setCreativeTab(TradingCard.instance.creativeTabItems);
         this.setHasSubtypes(true);
-        this.setMaxDamage(0);
+        this.setMaxDurability(0);
         this.postFix = postFix;
     }
 
-    
+
     public void addSubItem(int meta, String name, String texture, CardSet.Cards card) {
         this.names.put(meta, name);
         this.textures.put(meta, texture);
@@ -41,7 +41,7 @@ public class ItemCards extends Item {
 
     @Override
     public String getItemStackDisplayName(ItemStack itemstack) {
-        return names.get(itemstack.getItemDamage());
+        return names.get(itemstack.getCurrentDurability());
     }
 
     @Override
@@ -62,16 +62,16 @@ public class ItemCards extends Item {
 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
-        String flavorText = cards.get(itemStack.getItemDamage()).getFlavortext();
-        if (flavorText != null && flavorText != "")
+        String flavorText = cards.get(itemStack.getCurrentDurability()).getFlavortext();
+        if (flavorText != null && !flavorText.equals(""))
             list.add("§8§o" + flavorText);
 
-        list.add("This card is " + (itemStack.getItemDamage() + 1) + "/" + cards.size() + " in the " + postFix);
+        list.add("This card is " + (itemStack.getCurrentDurability() + 1) + "/" + cards.size() + " in the " + postFix);
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack itemStack) {
-        int meta = itemStack.getItemDamage();
+    public String getUnlocalizedName(ItemStack stack) {
+        int meta = stack.getCurrentDurability();
 
         if (this.names.get(meta) != null) {
             String unlocalizedName = this.names.get(meta).replace(" ", ".").toLowerCase();
@@ -87,7 +87,6 @@ public class ItemCards extends Item {
     public void registerIcons(IIconRegister register) {
         this.itemIcon = register.registerIcon(this.getIconString());
 
-        // Sub-Items textures
         for (Map.Entry<Integer, String> texture : this.textures.entrySet()) {
             int meta = texture.getKey();
             String textureName = texture.getValue();

@@ -1,9 +1,12 @@
 package com.teammetallurgy.tradingcard.client.gui;
 
-import com.teammetallurgy.tradingcard.common.utils.LibMisc;
+import com.teammetallurgy.tradingcard.TradingCard;
 import com.teammetallurgy.tradingcard.common.inventory.ContainerCardAlbum;
 import com.teammetallurgy.tradingcard.common.inventory.InventoryCardAlbum;
 import com.teammetallurgy.tradingcard.common.inventory.SlotCard;
+import com.teammetallurgy.tradingcard.common.network.GuiHandler;
+import com.teammetallurgy.tradingcard.common.network.PacketGui;
+import com.teammetallurgy.tradingcard.common.utils.LibMisc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -34,23 +37,26 @@ public class GuiAlbum extends GuiContainer {
     private Slot clickedSlot;
     private boolean isRightMouseClick;
     private ItemStack draggedStack;
-    private int field_147011_y;
-    private int field_147010_z;
+    private int touchUpX;
+    private int touchUpY;
     private Slot returningStackDestSlot;
     private long returningStackTime;
     private ItemStack returningStack;
-    protected final Set field_147008_s = new HashSet();
-    protected boolean field_147007_t;
-    private int field_146987_F;
-    private int field_146996_I;
+    protected final Set<Slot> dragSplittingSlots = new HashSet<Slot>();
+    protected boolean dragSplitting;
+    private int dragSplittingLimit;
+    private int dragSplittingRemnant;
 
     int slotW = 12;
     int slotH = 16;
 
-    public GuiAlbum(EntityPlayer inventoryPlayer, InventoryCardAlbum tileEntity) {
-        super(new ContainerCardAlbum(inventoryPlayer, tileEntity));
+    private EntityPlayer player;
+
+    public GuiAlbum(EntityPlayer player, InventoryCardAlbum inventoryCardAlbum) {
+        super(new ContainerCardAlbum(player, inventoryCardAlbum));
         this.xSize = 176;
         this.ySize = 222;
+        this.player = player;
     }
 
 
@@ -61,30 +67,63 @@ public class GuiAlbum extends GuiContainer {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+
     }
 
-    private void drawButton(int p_73863_1_, int p_73863_2_) {
-        for (int k = 0; k < this.buttonList.size(); ++k) {
-            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, p_73863_1_, p_73863_2_);
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        int k = (this.width - this.xSize) / 2;
+        int l = (this.height - this.ySize) / 2;
+
+        buttonList.add(new GuiButton(1, k + 126, l + 118, 10, 10, ">"));
+        buttonList.add(new GuiButton(2, k + 40, l + 118, 10, 10, "<"));
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        InventoryCardAlbum album = ((ContainerCardAlbum) this.inventorySlots).inventoryAlbum;
+        if (button.id == 1) {
+            if (album.currentPage + 1 < album.maxPage)
+                album.currentPage += 1;
+
+            System.out.println(album.currentPage);
         }
 
-        for (int k = 0; k < this.labelList.size(); ++k) {
-            ((GuiLabel) this.labelList.get(k)).func_146159_a(this.mc, p_73863_1_, p_73863_2_);
+        if (button.id == 2) {
+            if (album.currentPage - 1 >= 0)
+                album.currentPage -= 1;
+            System.out.println(album.currentPage);
+        }
+        GuiHandler.test(((ContainerCardAlbum) this.inventorySlots).inventoryAlbum);
+
+        if (player.worldObj.isRemote)
+            TradingCard.network.sendToServer(new PacketGui(0));
+    }
+
+    private void drawButton(int mouseX, int mouseY) {
+        for (Object aButtonList : this.buttonList) {
+            ((GuiButton) aButtonList).drawButton(this.mc, mouseX, mouseY);
+        }
+
+        for (Object aLabelList : this.labelList) {
+            ((GuiLabel) aLabelList).drawLabel(this.mc, mouseX, mouseY);
         }
 
     }
 
     @Override
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         int k = this.guiLeft;
         int l = this.guiTop;
-        this.drawGuiContainerBackgroundLayer(p_73863_3_, p_73863_1_, p_73863_2_);
+        this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        drawButton(p_73863_1_, p_73863_2_);
+        drawButton(mouseX, mouseY);
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glPushMatrix();
         GL11.glTranslatef((float) k, (float) l, 0.0F);
@@ -101,9 +140,9 @@ public class GuiAlbum extends GuiContainer {
 
             Slot slot = (Slot) this.inventorySlots.inventorySlots.get(i1);
 
-            func_146977_a(slot);
+            drawSlot(slot);
 
-            if (isMouseOverSlot(slot, p_73863_1_, p_73863_2_) && slot.func_111238_b()) {
+            if (isMouseOverSlot(slot, mouseX, mouseY) && slot.canBeHovered()) {
                 this.theSlot = slot;
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -126,7 +165,7 @@ public class GuiAlbum extends GuiContainer {
         //Forge: Force lighting to be disabled as there are some issue where lighting would
         //incorrectly be applied based on items that are in the inventory.
         GL11.glDisable(GL11.GL_LIGHTING);
-        this.drawGuiContainerForegroundLayer(p_73863_1_, p_73863_2_);
+        this.drawGuiContainerForegroundLayer(mouseX, mouseY);
         GL11.glEnable(GL11.GL_LIGHTING);
         InventoryPlayer inventoryplayer = this.mc.thePlayer.inventory;
         ItemStack itemstack = this.draggedStack == null ? inventoryplayer.getItemStack() : this.draggedStack;
@@ -139,16 +178,16 @@ public class GuiAlbum extends GuiContainer {
             if (this.draggedStack != null && this.isRightMouseClick) {
                 itemstack = itemstack.copy();
                 itemstack.stackSize = MathHelper.ceiling_float_int((float) itemstack.stackSize / 2.0F);
-            } else if (this.field_147007_t && this.field_147008_s.size() > 1) {
+            } else if (this.dragSplitting && this.dragSplittingSlots.size() > 1) {
                 itemstack = itemstack.copy();
-                itemstack.stackSize = this.field_146996_I;
+                itemstack.stackSize = this.dragSplittingRemnant;
 
                 if (itemstack.stackSize == 0) {
                     s = "" + EnumChatFormatting.YELLOW + "0";
                 }
             }
 
-            drawItemStack(itemstack, p_73863_1_ - k - b0, p_73863_2_ - l - k1, s);
+            drawItemStack(itemstack, mouseX - k - b0, mouseY - l - k1, s);
         }
 
         if (this.returningStack != null) {
@@ -159,10 +198,10 @@ public class GuiAlbum extends GuiContainer {
                 this.returningStack = null;
             }
 
-            k1 = this.returningStackDestSlot.xDisplayPosition - this.field_147011_y;
-            int j2 = this.returningStackDestSlot.yDisplayPosition - this.field_147010_z;
-            int l1 = this.field_147011_y + (int) ((float) k1 * f1);
-            int i2 = this.field_147010_z + (int) ((float) j2 * f1);
+            k1 = this.returningStackDestSlot.xDisplayPosition - this.touchUpX;
+            int j2 = this.returningStackDestSlot.yDisplayPosition - this.touchUpY;
+            int l1 = this.touchUpX + (int) ((float) k1 * f1);
+            int i2 = this.touchUpY + (int) ((float) j2 * f1);
             drawItemStack(this.returningStack, l1, i2, (String) null);
         }
 
@@ -170,7 +209,7 @@ public class GuiAlbum extends GuiContainer {
 
         if (inventoryplayer.getItemStack() == null && this.theSlot != null && this.theSlot.getHasStack()) {
             ItemStack itemstack1 = this.theSlot.getStack();
-            this.renderToolTip(itemstack1, p_73863_1_, p_73863_2_);
+            this.renderToolTip(itemstack1, mouseX, mouseY);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);
@@ -178,45 +217,45 @@ public class GuiAlbum extends GuiContainer {
         RenderHelper.enableStandardItemLighting();
     }
 
-    private void func_146977_a(Slot p_146977_1_) {
-        int i = p_146977_1_.xDisplayPosition;
-        int j = p_146977_1_.yDisplayPosition;
-        ItemStack itemstack = p_146977_1_.getStack();
+    private void drawSlot(Slot slotIn) {
+        int i = slotIn.xDisplayPosition;
+        int j = slotIn.yDisplayPosition;
+        ItemStack itemstack = slotIn.getStack();
         boolean flag = false;
-        boolean flag1 = p_146977_1_ == this.clickedSlot && this.draggedStack != null && !this.isRightMouseClick;
+        boolean flag1 = slotIn == this.clickedSlot && this.draggedStack != null && !this.isRightMouseClick;
         ItemStack itemstack1 = this.mc.thePlayer.inventory.getItemStack();
         String s = null;
 
-        if (p_146977_1_ == this.clickedSlot && this.draggedStack != null && this.isRightMouseClick && itemstack != null) {
+        if (slotIn == this.clickedSlot && this.draggedStack != null && this.isRightMouseClick && itemstack != null) {
             itemstack = itemstack.copy();
             itemstack.stackSize /= 2;
-        } else if (this.field_147007_t && this.field_147008_s.contains(p_146977_1_) && itemstack1 != null) {
-            if (this.field_147008_s.size() == 1) {
+        } else if (this.dragSplitting && this.dragSplittingSlots.contains(slotIn) && itemstack1 != null) {
+            if (this.dragSplittingSlots.size() == 1) {
                 return;
             }
 
-            if (Container.func_94527_a(p_146977_1_, itemstack1, true) && this.inventorySlots.canDragIntoSlot(p_146977_1_)) {
+            if (Container.canAddItemToSlot(slotIn, itemstack1, true) && this.inventorySlots.canDragIntoSlot(slotIn)) {
                 itemstack = itemstack1.copy();
                 flag = true;
-                Container.func_94525_a(this.field_147008_s, this.field_146987_F, itemstack, p_146977_1_.getStack() == null ? 0 : p_146977_1_.getStack().stackSize);
+                Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack, slotIn.getStack() == null ? 0 : slotIn.getStack().stackSize);
 
                 if (itemstack.stackSize > itemstack.getMaxStackSize()) {
                     s = EnumChatFormatting.YELLOW + "" + itemstack.getMaxStackSize();
                     itemstack.stackSize = itemstack.getMaxStackSize();
                 }
 
-                if (itemstack.stackSize > p_146977_1_.getSlotStackLimit()) {
-                    s = EnumChatFormatting.YELLOW + "" + p_146977_1_.getSlotStackLimit();
-                    itemstack.stackSize = p_146977_1_.getSlotStackLimit();
+                if (itemstack.stackSize > slotIn.getSlotStackLimit()) {
+                    s = EnumChatFormatting.YELLOW + "" + slotIn.getSlotStackLimit();
+                    itemstack.stackSize = slotIn.getSlotStackLimit();
                 }
             } else {
-                this.field_147008_s.remove(p_146977_1_);
-                this.func_146980_g();
+                this.dragSplittingSlots.remove(slotIn);
+                this.updateDragSplitting();
             }
         }
         int ww = 16;
         int hh = 16;
-        if (p_146977_1_ instanceof SlotCard) {
+        if (slotIn instanceof SlotCard) {
             ww = slotW;
             hh = slotH;
             i = i - 2;
@@ -226,7 +265,7 @@ public class GuiAlbum extends GuiContainer {
         itemRender.zLevel = 100.0F;
 
         if (itemstack == null) {
-            IIcon iicon = p_146977_1_.getBackgroundIconIndex();
+            IIcon iicon = slotIn.getBackgroundIconIndex();
 
             if (iicon != null) {
                 GL11.glDisable(GL11.GL_LIGHTING);
@@ -251,19 +290,19 @@ public class GuiAlbum extends GuiContainer {
         this.zLevel = 0.0F;
     }
 
-    private void func_146980_g() {
+    private void updateDragSplitting() {
         ItemStack itemstack = this.mc.thePlayer.inventory.getItemStack();
 
-        if (itemstack != null && this.field_147007_t) {
-            this.field_146996_I = itemstack.stackSize;
+        if (itemstack != null && this.dragSplitting) {
+            this.dragSplittingRemnant = itemstack.stackSize;
             ItemStack itemstack1;
             int i;
 
-            for (Iterator iterator = this.field_147008_s.iterator(); iterator.hasNext(); this.field_146996_I -= itemstack1.stackSize - i) {
-                Slot slot = (Slot) iterator.next();
+            for (Iterator<Slot> iterator = this.dragSplittingSlots.iterator(); iterator.hasNext(); this.dragSplittingRemnant -= itemstack1.stackSize - i) {
+                Slot slot = iterator.next();
                 itemstack1 = itemstack.copy();
                 i = slot.getStack() == null ? 0 : slot.getStack().stackSize;
-                Container.func_94525_a(this.field_147008_s, this.field_146987_F, itemstack1, i);
+                Container.computeStackSize(this.dragSplittingSlots, this.dragSplittingLimit, itemstack1, i);
 
                 if (itemstack1.stackSize > itemstack1.getMaxStackSize()) {
                     itemstack1.stackSize = itemstack1.getMaxStackSize();
@@ -283,7 +322,7 @@ public class GuiAlbum extends GuiContainer {
             ww = slotW;
             hh = slotH;
         }
-        return this.func_146978_c(slot.xDisplayPosition, slot.yDisplayPosition, ww, hh, p_146981_2_, p_146981_3_);
+        return this.isPointInRegion(slot.xDisplayPosition, slot.yDisplayPosition, ww, hh, p_146981_2_, p_146981_3_);
     }
 
     private void drawItemStack(ItemStack p_146982_1_, int p_146982_2_, int p_146982_3_, String p_146982_4_) {
