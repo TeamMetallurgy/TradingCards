@@ -26,7 +26,6 @@ public class ContainerCardAlbum extends Container {
         }
 
         bindPlayerInventory(entityPlayer.inventory);
-        System.out.println("New");
     }
 
 

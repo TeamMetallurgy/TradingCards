@@ -50,6 +50,7 @@ public class TradingCard {
         network.registerMessage(PacketGui.Handler.class, PacketGui.class, 0, Side.SERVER);
 
         CardHandler.register("base");
+       // CardHandler.register("mtg");
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
     }
 

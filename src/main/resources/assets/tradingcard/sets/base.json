@@ -69,6 +69,16 @@
       "cardName": "Cactus",
       "rarity": "Common",
       "sprite": "CactusCard"
+    },
+    {
+      "cardName": "Calf",
+      "rarity": "Common",
+      "sprite": "CalfCard"
+    },
+    {
+      "cardName": "Chest",
+      "rarity": "Common",
+      "sprite": "ChestCard"
     }
   ]
 }

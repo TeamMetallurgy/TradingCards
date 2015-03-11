@@ -50,7 +50,7 @@ public class CardHandler {
 
                     for (int i = 0; i < cardSet.getCards().size(); i++) {
                         CardSet.Cards card = cardSet.getCards().get(i);
-                        createCreateItem(setName, setCards, card, i);
+                        createCreateItem(setName, setCards, card, i, set);
 
                         OreDictionary.registerOre("card" + card.getRarity(), new ItemStack(setCards, 1, i));
                     }
@@ -58,7 +58,7 @@ public class CardHandler {
                     totalSum += cardSet.getDropweight();
 
                     ItemBooster itemBooster = new ItemBooster(cardSet, setCards);
-                    GameRegistry.registerItem(itemBooster, setName + ".booster");
+                    GameRegistry.registerItem(itemBooster, set + "." + setName + ".booster");
                     boosterCard.put(setName, itemBooster);
                     OreDictionary.registerOre("cardBooster", itemBooster);
 
@@ -79,9 +79,9 @@ public class CardHandler {
 
     }
 
-    private static void createCreateItem(String setname, ItemCards setCards, CardSet.Cards card, int meta) {
+    private static void createCreateItem(String setname, ItemCards setCards, CardSet.Cards card, int meta, String set) {
         if (meta == 0) {
-            GameRegistry.registerItem(setCards, setname + ".cards");
+            GameRegistry.registerItem(setCards, set + "." + setname + ".cards");
         }
 
         setCards.addSubItem(meta, card.getCardName(), card.getSprite(), card);

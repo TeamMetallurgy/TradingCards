@@ -54,20 +54,23 @@ public class GuiAlbum extends GuiContainer {
 
     public GuiAlbum(EntityPlayer player, InventoryCardAlbum inventoryCardAlbum) {
         super(new ContainerCardAlbum(player, inventoryCardAlbum));
-        this.xSize = 176;
+        this.xSize = 187;
         this.ySize = 222;
         this.player = player;
     }
 
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float parital, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float particle, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(LibMisc.MODID + ":" + "textures/gui/CardAlbum.png"));
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
+//        this.drawTexturedModalRect(k + 164, l + 58, 177, 2, 7, 14);
+//        this.drawTexturedModalRect(k + 5, l + 58, 177, 17, 7, 14);
+//        this.drawTexturedModalRect(k + 5, l + 58, 177, 17, 7, 14);
     }
 
     @Override
@@ -76,9 +79,9 @@ public class GuiAlbum extends GuiContainer {
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
-
-        buttonList.add(new GuiButton(1, k + 126, l + 118, 10, 10, ">"));
-        buttonList.add(new GuiButton(2, k + 40, l + 118, 10, 10, "<"));
+//        buttonList.add(new GuiButton(1, k + 126, l + 118, 10, 10, ">"));
+//        buttonList.add(new GuiButton(2, k + 40, l + 118, 10, 10, "<"));
+//        buttonList.add(new GuiButton(2, k + 40, l + 118, 10, 10, "Rename"));
     }
 
     @Override
@@ -88,13 +91,11 @@ public class GuiAlbum extends GuiContainer {
             if (album.currentPage + 1 < album.maxPage)
                 album.currentPage += 1;
 
-            System.out.println(album.currentPage);
-        }
-
-        if (button.id == 2) {
+        } else if (button.id == 2) {
             if (album.currentPage - 1 >= 0)
                 album.currentPage -= 1;
-            System.out.println(album.currentPage);
+        } else if (button.id == 3) {
+
         }
         GuiHandler.test(((ContainerCardAlbum) this.inventorySlots).inventoryAlbum);
 
@@ -102,16 +103,16 @@ public class GuiAlbum extends GuiContainer {
             TradingCard.network.sendToServer(new PacketGui(0));
     }
 
-    private void drawButton(int mouseX, int mouseY) {
-        for (Object aButtonList : this.buttonList) {
-            ((GuiButton) aButtonList).drawButton(this.mc, mouseX, mouseY);
-        }
-
-        for (Object aLabelList : this.labelList) {
-            ((GuiLabel) aLabelList).drawLabel(this.mc, mouseX, mouseY);
-        }
-
-    }
+//    private void drawButton(int mouseX, int mouseY) {
+//        for (Object aButtonList : this.buttonList) {
+//            ((GuiButton) aButtonList).drawButton(this.mc, mouseX, mouseY);
+//        }
+//
+//        for (Object aLabelList : this.labelList) {
+//            ((GuiLabel) aLabelList).drawLabel(this.mc, mouseX, mouseY);
+//        }
+//
+//    }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -123,7 +124,7 @@ public class GuiAlbum extends GuiContainer {
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        drawButton(mouseX, mouseY);
+      //  drawButton(mouseX, mouseY);
         RenderHelper.enableGUIStandardItemLighting();
         GL11.glPushMatrix();
         GL11.glTranslatef((float) k, (float) l, 0.0F);
