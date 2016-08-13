@@ -8,6 +8,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 
 import java.util.HashMap;
@@ -63,8 +64,13 @@ public class ItemCards extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
         String flavorText = cards.get(itemStack.getCurrentDurability()).getFlavortext();
-        if (flavorText != null && !flavorText.equals(""))
-            list.add("§8§o" + flavorText);
+        if (flavorText != null && !flavorText.equals("")){
+        	String formatedFlavorText = EnumChatFormatting.DARK_GRAY.toString();
+        	formatedFlavorText += EnumChatFormatting.ITALIC.toString();
+        	formatedFlavorText += flavorText;
+        	formatedFlavorText += EnumChatFormatting.RESET.toString();
+            list.add(formatedFlavorText);
+        }
 
         list.add("This card is " + (itemStack.getCurrentDurability() + 1) + "/" + cards.size() + " in the " + postFix);
     }
